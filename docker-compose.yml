@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_PASSWORD: password
+    volumes:
+      - heroku_data:/var/lib/postgresql/data
+  app:
+    build: ./app
+    command: tail -F anything
+    volumes:
+      - ./app:/app
+    ports:
+      - "5001:5001"
+
+  jupyter:
+    image: jupyter/minimal-notebook
+    volumes:
+      - ./notebooks:/home/jovyan/work
+    ports:
+      - "8888:8888"
+    depends_on:
+      - db
+      - app
+
+volumes:
+  heroku_data:
